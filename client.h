@@ -40,6 +40,7 @@ private:
 	
 	tcp::socket socket_;
 	tcp::resolver resolver;
+	tcp::endpoint ep;
 
 	char request[max_length];
 	size_t request_length;	

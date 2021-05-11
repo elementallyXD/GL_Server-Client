@@ -49,7 +49,8 @@ class server
 {
 public:
     server(boost::asio::io_context& io_context, const unsigned int port) : 
-        acceptor_(io_context, tcp::endpoint(tcp::v4(), port)), 
+        ep(tcp::v4(), port),
+        acceptor_(io_context, ep),
         session_id(0)
     {
         do_accept();
@@ -58,6 +59,8 @@ public:
 private:
     void do_accept();
     
+    const tcp::endpoint ep;
     tcp::acceptor acceptor_;
+    
     unsigned int session_id;
 };

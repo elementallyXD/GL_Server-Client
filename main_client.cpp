@@ -10,14 +10,21 @@ int main(int argc, char* argv[])
             return 1;
         }
 
+        /*HELP*/
+
+        /*CONNECT TO SERVER*/
         client client;
         client.ConnectToServer(
             argv[1],    // host
             argv[2]     // port
         );
 
+        /*SEND*/
         client.Send();
         client.GetReply();
+
+        /*EXIT*/
+        //return 0;
     }
     catch (std::exception& e)
     {
