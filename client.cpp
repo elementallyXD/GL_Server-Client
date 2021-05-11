@@ -1,45 +1,35 @@
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <boost/asio.hpp>
+#include "client.h"
 
-using boost::asio::ip::tcp;
-
-enum { max_length = 1024 };
-
-int main(int argc, char* argv[])
+void client::ConnectToServer(char* host, char* port) 
 {
-    try
-    {
-        if (argc != 3)
-        {
-            std::cerr << "Usage: blocking_tcp_echo_client <host> <port>\n";
-            return 1;
-        }
+	const unsigned int port_number = std::atoi(port);
+	
+	if (port_number > 0 && port_number < 65536)
+		boost::asio::connect(socket_, resolver.resolve(host, port));
+	else {
+		throw std::runtime_error("Error: Invalid Port.\n");
+	}
+}
 
-        boost::asio::io_context io_context;
+void client::Send() 
+{
+	std::cout << "CLIENT> Enter message: ";
 
-        tcp::socket s(io_context);
-        tcp::resolver resolver(io_context);
-        boost::asio::connect(s, resolver.resolve(argv[1], argv[2]));
+	std::cin.getline(request, max_length);
+	request_length = std::strlen(request);
+	boost::asio::write(socket_, boost::asio::buffer(request, request_length));
+}
 
-        std::cout << "Enter message: ";
-        char request[max_length];
-        std::cin.getline(request, max_length);
-        size_t request_length = std::strlen(request);
-        boost::asio::write(s, boost::asio::buffer(request, request_length));
+void client::GetReply()
+{
+	char reply[max_length];
 
-        char reply[max_length];
-        size_t reply_length = boost::asio::read(s,
-            boost::asio::buffer(reply, request_length));
-        std::cout << "Reply is: ";
-        std::cout.write(reply, reply_length);
-        std::cout << "\n";
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << "\n";
-    }
+	size_t reply_length = boost::asio::read(
+		socket_,
+		boost::asio::buffer(reply, request_length)
+	);
 
-    return 0;
+	std::cout << "CLIENT> Reply is: ";
+	std::cout.write(reply, reply_length);
+	std::cout << std::endl;
 }
