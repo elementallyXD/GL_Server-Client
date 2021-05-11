@@ -13,7 +13,7 @@ void client::ConnectToServer(char* host, char* port)
 
 void client::Send() 
 {
-	std::cout << "CLIENT> Enter message: ";
+	std::cout << "CLIENT> SEND MSG: ";
 
 	std::cin.getline(request, max_length);
 	request_length = std::strlen(request);
@@ -29,7 +29,7 @@ void client::GetReply()
 		boost::asio::buffer(reply, request_length)
 	);
 
-	std::cout << "CLIENT> Reply is: ";
+	std::cout << "CLIENT> REPLY: ";
 	std::cout.write(reply, reply_length);
 	std::cout << std::endl;
 }
