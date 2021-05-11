@@ -30,7 +30,7 @@ public:
             socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
             socket_.close(ec);
             if (ec) {
-                std::cerr << "Close socket error: " << ec.message() << std::endl;
+                std::cerr << "\tClose socket error: " << ec.message() << std::endl;
             }
         }
     }

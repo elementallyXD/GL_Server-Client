@@ -11,7 +11,7 @@ void session::do_read()
             {
                 tcp::endpoint remote_ep = socket_.remote_endpoint();
                 
-                std::cout << "SERVER [CLIENT ID: " << session_id <<"]> GET FROM IP: " << remote_ep.address() << "\tDATA:";
+                std::cout << "\tSERVER [CLIENT ID: " << session_id <<"]> GET FROM IP: " << remote_ep.address() << "\tDATA:";
                 std::cout.write(data_, length);
                 std::cout << std::endl;
 
@@ -30,7 +30,7 @@ void session::do_write(std::size_t size)
             if (!ec)
             {
                 tcp::endpoint remote_ep = socket_.remote_endpoint();
-                std::cout << "SERVER [CLIENT ID: " << session_id <<"]> SEND TO IP: " << remote_ep.address() << "\tDATA:";
+                std::cout << "\tSERVER [CLIENT ID: " << session_id <<"]> SEND TO IP: " << remote_ep.address() << "\tDATA:";
                 std::cout.write(data_, length);
                 std::cout << std::endl << std::endl;
                 
