@@ -10,8 +10,9 @@ using boost::asio::ip::tcp;
 class session : public std::enable_shared_from_this<session>
 {
 public:
-    session(tcp::socket socket)
-        : socket_(std::move(socket))
+    session(tcp::socket socket, const unsigned int& id):
+        socket_(std::move(socket)),
+        session_id(id)
     {
     }
 
@@ -36,18 +37,20 @@ public:
 
 private:
     void do_read();
-    void do_write(std::size_t length);
+    void do_write(std::size_t size);
 
     tcp::socket socket_;
     enum { max_length = 1024 };
     char data_[max_length];
+    unsigned int session_id;
 };
 
 class server
 {
 public:
-    server(boost::asio::io_context& io_context, const unsigned int port)
-        : acceptor_(io_context, tcp::endpoint(tcp::v4(), port))
+    server(boost::asio::io_context& io_context, const unsigned int port) : 
+        acceptor_(io_context, tcp::endpoint(tcp::v4(), port)), 
+        session_id(0)
     {
         do_accept();
     }
@@ -56,4 +59,5 @@ private:
     void do_accept();
     
     tcp::acceptor acceptor_;
+    unsigned int session_id;
 };

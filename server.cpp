@@ -9,20 +9,28 @@ void session::do_read()
         {
             if (!ec)
             {
+                std::cout << "SERVER [CLIENT ID: " << session_id <<"]> GET: ";
+                std::cout.write(data_, length);
+                std::cout << std::endl;
+
                 do_write(length);
             }
         });
 }
 
-void session::do_write(std::size_t length) 
+void session::do_write(std::size_t size) 
 {
     auto self(shared_from_this());
 
-    boost::asio::async_write(socket_, boost::asio::buffer(data_, length),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/)
+    boost::asio::async_write(socket_, boost::asio::buffer(data_, size),
+        [this, self](boost::system::error_code ec, std::size_t length)
         {
             if (!ec)
             {
+                std::cout << "SERVER [CLIENT ID: " << session_id <<"]> SEND: ";
+                std::cout.write(data_, length);
+                std::cout << std::endl << std::endl;
+                
                 do_read();
             }
         });
@@ -35,7 +43,7 @@ void server::do_accept()
         {
             if (!ec)
             {
-                std::make_shared<session>(std::move(socket))->start();
+                std::make_shared<session>(std::move(socket), ++session_id)->start();
             }
 
             do_accept();
