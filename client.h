@@ -10,14 +10,14 @@ class client
 {
 public:
 	client() :
-		socket_(io_context),
-		resolver(io_context),
+		socket_(io_service),
+		resolver(io_service),
 		request_length(0)
 	{
 	}
 
-	void ConnectToServer(char* host, char* port);
-	void Send();
+	void ConnectToServer(std::string& host, std::string& port);
+	void Send(std::vector<std::string>& message);
 	void GetReply();
 
 	~client() noexcept
@@ -36,14 +36,14 @@ public:
 
 private:
 	enum { max_length = 1024 };
-	boost::asio::io_context io_context;
-	
+	boost::asio::io_service io_service;
+
 	tcp::socket socket_;
 	tcp::resolver resolver;
 	tcp::endpoint ep;
 
 	char request[max_length];
-	size_t request_length;	
+	size_t request_length;
 };
 
 

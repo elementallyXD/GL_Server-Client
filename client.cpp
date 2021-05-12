@@ -1,29 +1,27 @@
 #include "client.h"
 
-void client::ConnectToServer(char* host, char* port) 
+void client::ConnectToServer(std::string& host, std::string& port)
 {
-	const unsigned int port_number = std::atoi(port);
-	std::cout << "CONNECT TO " << host << ":" << port_number << std::endl;
-	if (port_number > 0 && port_number < 65536) 
-	{
-		ep = boost::asio::connect(socket_, resolver.resolve(host, port));
-		std::cout << "SUCCESSFULLY CONNECTED" << std::endl;
-	}
-	else {
-		std::cout << "UNABLE TO CONNECT" << std::endl;
-		throw std::runtime_error("Error: Invalid Port. Port must be greter than 0 and less than 65536\n");
-	}
+	std::cout << "\tCONNECTING TO " << host << ":" << port << std::endl;
+	ep = boost::asio::connect(socket_, resolver.resolve(host, port));
+	std::cout << "\tSUCCESSFULLY CONNECTED" << std::endl;
 }
 
-void client::Send() 
+void client::Send(std::vector<std::string>& message)
 {
-	std::cout << "CLIENT> SEND MSG: ";
-	std::cin.getline(request, max_length);
-	
+	char* buf = request;
+	for (size_t i = 0; i < message.size(); ++i)
+	{
+		for (char c = 0; c < std::strlen(message[i].c_str()); c++)
+			*buf++ = message[i][c];
+		*buf++ = ' ';
+	}
+	*buf++ = '\0';
+
 	request_length = std::strlen(request);
 	boost::asio::write(socket_, boost::asio::buffer(request, request_length));
-	
-	std::cout << "CLIENT> MSG SEND TO " << ep.address() << ":" << ep.port() << "\tDATA: " << request << std::endl;
+
+	std::cout << "\tCLIENT MSG SEND TO " << ep.address() << ":" << ep.port() << "\tDATA: " << request << std::endl;
 }
 
 void client::GetReply()
@@ -35,7 +33,8 @@ void client::GetReply()
 		boost::asio::buffer(reply, request_length)
 	);
 
-	std::cout << "CLIENT> REPLY: ";
+	memset(request, 0, sizeof request);
+	std::cout << "\tSERVER REPLY FROM " << ep.address() << ":" << ep.port() << "\tDATA: ";
 	std::cout.write(reply, reply_length);
 	std::cout << std::endl;
 }
