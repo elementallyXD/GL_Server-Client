@@ -7,9 +7,7 @@ using namespace cli;
 
 int main(void)
 {
-    try
-    {
-        boost::asio::io_context io_context;
+        boost::asio::io_service io_service;
         unsigned int port;
         bool set_port = false;
         
@@ -20,14 +18,21 @@ int main(void)
             { 
                 if (set_port) 
                 {
-                    server s(io_context, port);
-                    std::cout << "\tSERVER STARTED ON " << port << std::endl;
-                    if(io_context.stopped())
-                        io_context.restart();
-                    io_context.run();
+                    try
+                    {
+                        server s(io_service, port);
+                        std::cout << "\tSERVER STARTED ON " << port << std::endl;
+                        if(io_service.stopped())
+                            io_service.restart();
+                        io_service.run();
+                    }
+                    catch (const std::exception& e)
+                    {
+                        std::cerr << "SERVER> Exception: " << e.what() << "\n";
+                    }
                 }
                 else {
-                    out << "You must set port for server. Use: \"setPort <value>\"" << "\n";
+                    out << "You must set port for server. Use: \"setPort <int>\"" << "\n";
                 }
             },
             "Start server");
@@ -54,9 +59,16 @@ int main(void)
             [&](std::ostream& out) 
             { 
                 if (set_port){
-                    if (!io_context.stopped())
-                        io_context.stop();
-                    out << "\tSTOPED ON PORT " << port << std::endl;
+                    try
+                    {
+                        if (!io_service.stopped())
+                            io_service.stop();
+                        out << "\tSTOPED ON PORT " << port << std::endl;
+                    }
+                    catch (const std::exception& e)
+                    {
+                        std::cerr << "SERVER> Exception: " << e.what() << "\n";
+                    }
                 }
                 else {
                     out << "You don't specify the port or don't start the server." << "\n";
@@ -65,21 +77,16 @@ int main(void)
             "Stop server");
 
         Cli cli(std::move(rootMenu));
-        cli.ExitAction([&io_context](auto& out) 
+        cli.ExitAction([&io_service](auto& out)
         { 
-            if (!io_context.stopped())
-                io_context.stop();
+            if (!io_service.stopped())
+                io_service.stop();
                
             out << "\tEXIT. Goodbye!\n"; 
         });
 
         CliFileSession input(cli);
         input.Start();
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "SERVER> Exception: " << e.what() << "\n";
-    }
 
     return 0;
 }

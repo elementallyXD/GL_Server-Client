@@ -1,8 +1,6 @@
 #pragma once
-#include <cstdlib>
+
 #include <iostream>
-#include <memory>
-#include <utility>
 #include <boost/asio.hpp>
 
 using boost::asio::ip::tcp;
@@ -48,9 +46,9 @@ private:
 class server
 {
 public:
-    server(boost::asio::io_context& io_context, const unsigned int port) : 
+    server(boost::asio::io_service& io_service, const unsigned int port) :
         ep(tcp::v4(), port),
-        acceptor_(io_context, ep),
+        acceptor_(io_service, ep),
         session_id(0)
     {
         do_accept();

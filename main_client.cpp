@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         /*EXIT*/
         //return 0;
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << "CLIENT> Exception: " << e.what() << "\n";
     }

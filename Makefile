@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-Wall -Wextra -c -Wfloat-equal -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual
-BOOSTFLAGS=-lboost_system -lboost_thread -lpthread -pthread -lboost_program_options -std=c++14
+BOOSTFLAGS=-lboost_system -lboost_thread -lpthread -std=c++14
 
 EXECUTABLE_S=server
 EXECUTABLE_C=client
