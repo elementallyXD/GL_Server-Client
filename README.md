@@ -45,10 +45,9 @@ For run client use:
 ```
 
 ## Install for Windows
-To download files use:
-```
-https://cutt.ly/XbH4Fdv
-```
+To download files use [Google Drive](https://cutt.ly/XbH4Fdv)
+or use [Releases for download files](https://github.com/elementallyXD/GL_Server-Client/releases)
+
 Unpack or move to your directory. Open Windows Terminal(CMD) as an administrator in that directory.
 
 ## Usage for Windows OS
