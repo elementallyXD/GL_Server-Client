@@ -39,14 +39,14 @@ private:
 
     tcp::socket socket_;
     enum { max_length = 1024 };
-    char data_[max_length];
-    unsigned int session_id;
+    char data_[max_length] = {0};
+    unsigned int session_id = 0 ;
 };
 
 class server
 {
 public:
-    server(boost::asio::io_service& io_service, const unsigned int port) :
+    server(boost::asio::io_service&& io_service, const unsigned int& port) :
         ep(tcp::v4(), port),
         acceptor_(io_service, ep),
         session_id(0)
@@ -60,5 +60,5 @@ private:
     const tcp::endpoint ep;
     tcp::acceptor acceptor_;
     
-    unsigned int session_id;
+    unsigned int session_id = 0;
 };
