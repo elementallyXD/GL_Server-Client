@@ -30,11 +30,17 @@ int main(void)
                         int port = boost::lexical_cast<int>(result_vect[1].c_str());
                         if (port > 0 && port < 65536)
                         {
-                            client.ConnectToServer(
-                                result_vect[0],    // host
-                                result_vect[1]     // port
-                            );
-                            connected = true;
+                            if (!connected)
+                            {
+                                client.ConnectToServer(
+                                    result_vect[0],    // host
+                                    result_vect[1]     // port
+                                );
+                                connected = true;
+                            }
+                            else {
+                                out << "\tYou are connected to server!" << "\n";
+                            }
                         }
                         else
                         {

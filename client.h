@@ -43,5 +43,3 @@ private:
 	char request[max_length] = {0};
 	size_t request_length;
 };
-
-
