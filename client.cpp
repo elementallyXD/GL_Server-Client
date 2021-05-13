@@ -1,18 +1,18 @@
 #include "client.h"
 
-void client::ConnectToServer(std::string& host, std::string& port)
+void client::ConnectToServer(const std::string& host, const std::string& port)
 {
 	std::cout << "\tCONNECTING TO " << host << ":" << port << std::endl;
 	ep = boost::asio::connect(socket_, resolver.resolve(host, port));
-	std::cout << "\tSUCCESSFULLY CONNECTED" << std::endl;
+	std::cout << "\tSUCCESSFULLY CONNECTED\n" << std::endl;
 }
 
-void client::Send(std::vector<std::string>& message)
+void client::Send(const std::vector<std::string>& message)
 {
 	char* buf = request;
 	for (size_t i = 0; i < message.size(); ++i)
 	{
-		for (char c = 0; c < std::strlen(message[i].c_str()); c++)
+		for (size_t c = 0; c < std::strlen(message[i].c_str()); c++)
 			*buf++ = message[i][c];
 		*buf++ = ' ';
 	}
@@ -36,5 +36,5 @@ void client::GetReply()
 	memset(request, 0, sizeof request);
 	std::cout << "\tSERVER REPLY FROM " << ep.address() << ":" << ep.port() << "\tDATA: ";
 	std::cout.write(reply, reply_length);
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 }

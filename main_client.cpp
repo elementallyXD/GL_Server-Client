@@ -11,13 +11,14 @@ using namespace cli;
 int main(void)
 {
     client client;
+    bool connected = false;
     auto rootMenu = std::make_unique< Menu >("CLIENT");
 
     rootMenu->Insert(
         "connect",
-        [&](std::ostream& out, std::string host_port)
+        [&](std::ostream& out, const std::string& host_port)
         {
-            if (host_port != "")
+            if (!host_port.empty())
             {
                 try
                 {
@@ -33,11 +34,11 @@ int main(void)
                                 result_vect[0],    // host
                                 result_vect[1]     // port
                             );
-                            //flag connected or not
+                            connected = true;
                         }
                         else
                         {
-                            std::cout << "\tUNABLE TO CONNECT" << std::endl;
+                            std::cout << "\tUNABLE TO CONNECT\n" << std::endl;
                             throw std::runtime_error("\tError: Invalid Port. Port must be greter than 0 and less than 65536\n");
                         }
                     }
@@ -60,15 +61,19 @@ int main(void)
 
     rootMenu->Insert(
         "send",
-        [&client](std::ostream& out, std::vector<std::string> msg)
+        [&client, &connected](std::ostream& out, const std::vector<std::string>& msg)
         {
-            if (msg[0] != "")
+            if (msg.size() > 0)
             {
                 try
                 {
-                    //flag check
-                    client.Send(msg);
-                    client.GetReply();
+                    if (connected) {
+                        client.Send(msg);
+                        client.GetReply();
+                    }
+                    else {
+                        out << "\tYou need to connect to the server! Use: \"connect <string>\"" << "\n";
+                    }
                 }
                 catch (const std::exception& ex)
                 {

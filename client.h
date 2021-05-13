@@ -1,6 +1,4 @@
 #pragma once
-#include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <boost/asio.hpp>
 
@@ -16,8 +14,8 @@ public:
 	{
 	}
 
-	void ConnectToServer(std::string& host, std::string& port);
-	void Send(std::vector<std::string>& message);
+	void ConnectToServer(const std::string& host, const std::string& port);
+	void Send(const std::vector<std::string>& message);
 	void GetReply();
 
 	~client() noexcept
@@ -42,7 +40,7 @@ private:
 	tcp::resolver resolver;
 	tcp::endpoint ep;
 
-	char request[max_length];
+	char request[max_length] = {0};
 	size_t request_length;
 };
 
