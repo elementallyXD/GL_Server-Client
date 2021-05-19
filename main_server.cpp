@@ -11,34 +11,38 @@ int main(void)
 {
     boost::asio::io_service io_service;
     unsigned int port;
-    bool set_port = false;
+    bool set_port = false, started = false;
+    std::unique_ptr<server> ser;
+    
+    boost::thread run_service;
 
     auto rootMenu = std::make_unique< Menu >("SERVER");
     rootMenu->Insert(
         "start",
         [&](std::ostream& out)
         {
-            if (set_port)
+            if (set_port && !started)
             {
                 try
                 {
-                    server s(std::move(io_service), port);
+                    started = true;
+                    ser = std::make_unique<server>(std::move(io_service), port);
+
                     std::cout << "\tSERVER STARTED ON " << port << std::endl;
 
-                    if (io_service.stopped())
-                        io_service.restart();
-                        
-                    std::thread run_service([&] { io_service.run(); });
-                    run_service.join();
-
+                    run_service = boost::thread([&io_service]
+                        {
+                                io_service.reset();
+                                io_service.run();
+                        });
                 }
                 catch (const std::exception& e)
                 {
-                    std::cerr << "SERVER> Exception: " << e.what() << "\n";
+                    std::cerr << "\tSERVER> Exception: " << e.what() << "\n";
                 }
             }
             else {
-                out << "You must set port for server. Use: \"setPort <int>\"" << "\n";
+                out << "\tYou already started the server or you must set the port for the server. Use: \"setPort <int>\" or \"start\"" << "\n";
             }
         },
         "Start server");
@@ -69,11 +73,17 @@ int main(void)
                 {
                     if (!io_service.stopped())
                         io_service.stop();
+                    run_service.join();
+
+                    delete ser.release();
+                    ser.reset();
+
+                    started = false;
                     out << "\tSTOPED ON PORT " << port << std::endl;
                 }
                 catch (const std::exception& e)
                 {
-                    std::cerr << "SERVER> Exception: " << e.what() << "\n";
+                    std::cerr << "\tSERVER> Exception: " << e.what() << "\n";
                 }
             }
             else {
@@ -83,11 +93,18 @@ int main(void)
         "Stop server");
 
     Cli cli(std::move(rootMenu));
-    cli.ExitAction([&io_service](auto& out)
+    cli.ExitAction([&io_service, &run_service, &ser, &started](auto& out)
         {
+            
             if (!io_service.stopped())
                 io_service.stop();
+                
+            run_service.join();
 
+            delete ser.release();
+            ser.reset();
+
+            started = false;
             out << "\tEXIT. Goodbye!\n";
         });
 
