@@ -16,7 +16,6 @@ public:
 
 	void ConnectToServer(const std::string& host, const std::string& port);
 	void Send(const std::vector<std::string>& message);
-	void GetReply();
 
 	~client() noexcept
 	{

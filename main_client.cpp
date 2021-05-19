@@ -75,7 +75,6 @@ int main(void)
                 {
                     if (connected) {
                         client.Send(msg);
-                        client.GetReply();
                     }
                     else {
                         out << "\tYou need to connect to the server! Use: \"connect <string>\"" << "\n";

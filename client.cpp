@@ -23,18 +23,3 @@ void client::Send(const std::vector<std::string>& message)
 
 	std::cout << "\tCLIENT MSG SEND TO " << ep.address() << ":" << ep.port() << "\tDATA: " << request << std::endl;
 }
-
-void client::GetReply()
-{
-	char reply[max_length];
-
-	size_t reply_length = boost::asio::read(
-		socket_,
-		boost::asio::buffer(reply, request_length)
-	);
-
-	memset(request, 0, sizeof request);
-	std::cout << "\tSERVER REPLY FROM " << ep.address() << ":" << ep.port() << "\tDATA: ";
-	std::cout.write(reply, reply_length);
-	std::cout << std::endl << std::endl;
-}
